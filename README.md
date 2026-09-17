@@ -115,4 +115,6 @@ python training/shard_dataset.py \
 ```
 Then, we finetune Meta-Llama-3.1-8B-Instruct on our curated data (see our [`training configuration`](./training/training_cfg.yaml)) using [`LLaMAFactory`](https://github.com/hiyouga/LlamaFactory)
 
-**Construct Steering Vector.** We sample 5,000 input papers from training corpus, use TrustReviewer's generated reviews as negative data and their official reviews as positive data. The steering vector is constructed using [`representation-engineering`](https://github.com/andyzoujm/representation-engineering)
+### Construct Steering Vector
+
+We sample 5,000 input papers from training corpus, use TrustReviewer's generated reviews as negative data and their official reviews as positive data. The steering vector is constructed using [`representation-engineering`](https://github.com/andyzoujm/representation-engineering)
