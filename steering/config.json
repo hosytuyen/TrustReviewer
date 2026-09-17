@@ -1,0 +1,8 @@
+{
+  "vector_file": "steering_vector.pt",
+  "method": "mean_difference",
+  "layers": [31],
+  "coefficient": 0.15,
+  "source_model": "stage2_naive_replay",
+  "deployment_model": "TrustReviewer stage2_all_in_one"
+}
