@@ -1,6 +1,6 @@
 {
   "trustreviewer": {
-    "file_name": "training.json",
+    "file_name": "../data/training.json",
     "formatting": "sharegpt",
     "columns": {
       "messages": "messages"

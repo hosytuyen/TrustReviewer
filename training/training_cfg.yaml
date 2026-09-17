@@ -13,7 +13,7 @@ lora_target: all
 
 ### dataset
 dataset: trustreviewer
-dataset_dir: ./data
+dataset_dir: ./training
 template: llama3
 cutoff_len: 64000
 preprocessing_num_workers: 16
