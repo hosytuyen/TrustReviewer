@@ -1,6 +1,7 @@
 # Large release artifacts are downloaded from Hugging Face and are not versioned in Git.
 model/
-data/
+data/*
+!data/dataset_info.json
 outputs/
 __pycache__/
 evaluation/__pycache__/
