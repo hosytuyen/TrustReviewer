@@ -38,19 +38,17 @@ pip install -r requirements.txt
 
 ## Download Model and Data
 
-The model and dataset are released separately on Hugging Face. From the repository root, download them into the local paths used by all later generation and evaluation commands:
 
 ```bash
 pip install -U huggingface_hub
 
-# Merged TrustReviewer checkpoint.
 hf download hosytuyen/TrustReviewer \
-  --local-dir model
+  --local-dir ./model
 
 # Fixed held-out split and curated training corpus.
 hf download hosytuyen/TrustReviewer \
   --repo-type dataset \
-  --local-dir data
+  --local-dir ./data
 ```
 
 This creates `model/`, `data/eval.json`, and `data/training.json`. 
@@ -89,22 +87,32 @@ python evaluation/generate_steered_reviews.py \
 
 The minimal wrapper in `evaluation/repe/` is copied from the MIT-licensed
 [`representation-engineering`](https://github.com/andyzoujm/representation-engineering) project.
-The vector was estimated using the stage2-naive-replay model and is applied here
-to the architecture-compatible TrustReviewer all-in-one merged model.
+The vector was estimated using the TrustReviewer's review and official review.
 
 ## Recommendation Matching and MAD
+Following, [OpenReviewer](https://arxiv.org/abs/2412.11948), we use Recommendation Matching and MAD for the evaluation.
 
-This evaluation requires official reviews in `HUMAN_REVIEW_DIR/<paper_id>/*.md`.
 
 ```bash
 python evaluation/recommendation_matching.py \
-  --review-dir outputs/first_run \
+  --review-dir outputs/eval \
   --human-review-dir /path/to/human_review
 ```
 
 The report contains:
 
-- `exact_match_rate`: whether a generated 1--10 rating exactly matches at least one official review rating.
+- `exact_match_rate`: whether a generated rating exactly matches at least one official review rating.
 - `mean_abs_distance_to_human_mean`: MAD between the generated rating and the mean valid official rating for the paper.
 
-Both scripts use only the fixed held-out paper IDs by default.
+## Training TrustReviewer and Construct Steering Vector (Optional)
+
+### Training of TrustReviewer
+Prepare shard dataset:
+```bash
+python training/shard_dataset.py \
+    --input data/training.json \
+    --output-dir data/training_sharded
+```
+Then, we finetune Meta-Llama-3.1-8B-Instruct on our curated data (see our [`training configuration`](./training/training_cfg.yaml)) using [`LLaMAFactory`](https://github.com/hiyouga/LlamaFactory)
+
+**Construct Steering Vector.** We sample 5,000 input papers from training corpus, use TrustReviewer's generated reviews as negative data and their official reviews as positive data. The steering vector is constructed using [`representation-engineering`](https://github.com/andyzoujm/representation-engineering)
